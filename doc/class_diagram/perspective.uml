@@ -1,0 +1,129 @@
+@startuml{perspective.pdf}
+
+title <size:20>pymeasure, ƒNƒ‰ƒX} (‘S‘Ì})</size>
+
+
+package communicator <<Frame>>{
+    ' communicator
+    ' ============
+    interface communicator{
+        + open()
+        + close()
+        + send()
+        + recv()
+        + readline()
+    }
+    
+    ' communicator.socket
+    ' -------------------
+    class socket{
+        - network
+        - socket.socket
+    }
+    socket -up-|> communicator
+    
+    ' communicator.prologix_gpib
+    ' --------------------------
+    class prologix_gpib{
+        - gpib
+        - socket
+    }
+    prologix_gpib -up-> socket
+    
+    ' communicator.sena_ps110a
+    ' ------------------------
+    class sena_ps110{
+        - serial
+        - socket
+    }
+    sena_ps110 -up-> socket
+    
+    ' parameter
+    ' =========
+    package parameter <<Rect>> {
+    
+    ' parameter.network
+    ' -----------------
+    class network #E0FFFF{
+        - host
+        - port
+        - _ip_
+        - _tcp_
+        - timeout
+    }
+    
+    ' parameter.gpib
+    ' --------------
+    class gpib #E0FFFF{
+        - port
+    }
+    
+    ' parameter.serial
+    ' ----------------
+    class serial #E0FFFF{
+        - boadrate
+    }
+    }
+        
+}
+
+package device <<Frame>>{
+    ' device
+    ' ======
+    abstract device{
+    }
+    
+    package signalgenerator <<Rect>> {
+    ' Signal Generator
+    ' ================
+    interface signalgenerator.signalgenerator{
+        
+    }
+    
+    ' Agilent
+    ' -------
+    package sg.agilent #EEEEEE{
+    class sg.agilent.agilent{
+        - device
+    }
+    sg.agilent.agilent -up-|> signalgenerator.signalgenerator
+    
+    class sg.agilent.E8257D
+    sg.agilent.E8257D -up-|> sg.agilent.agilent
+
+    class sg.agilent.E8247C
+    sg.agilent.E8247C -up-|> sg.agilent.agilent
+
+    class sg.agilent.83732C
+    sg.agilent.83732C -up-|> sg.agilent.agilent
+    }
+    
+    ' HP
+    ' --
+    package sg.hp #EEEEEE{
+    class sg.hp.hp{
+        - device
+    }
+    sg.hp.hp -up-|> signalgenerator.signalgenerator
+    
+    class sg.hp.8644B
+    sg.hp.8644B -up-> sg.hp.hp
+    }
+    
+    ' phase matrix
+    ' ------------
+    package sg.phasematrix #EEEEEE{
+    class sg.phasematrix.phasematrix{
+        - device
+    }
+    sg.phasematrix.phasematrix -up-|> signalgenerator.signalgenerator
+    
+    class sg.phasematrix.FSW0010
+    sg.phasematrix.FSW0010 -up-|> sg.phasematrix.phasematrix
+
+    class sg.phasematrix.FSW0020
+    sg.phasematrix.FSW0020 -up-|> sg.phasematrix.phasematrix
+    }
+}
+
+@enduml
