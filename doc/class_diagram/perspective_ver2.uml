@@ -1,0 +1,358 @@
+@startuml
+
+title <size:20>pymeasure, ÉNÉâÉXê} (ëSëÃê})</size>
+
+
+package communicator <<Frame>>{
+    ' communicator
+    ' ============
+    interface communicator{
+        + open()
+        + close()
+        + send()
+        + recv()
+        + readline()
+    }
+    
+    ' communicator.socket
+    ' -------------------
+    class socket{
+        - network
+        - socket.socket
+    }
+    socket -up-|> communicator
+    
+    ' communicator.prologix_gpib
+    ' --------------------------
+    class prologix_gpib{
+        - gpib
+        - socket
+    }
+    prologix_gpib -up-> socket
+    
+    ' communicator.sena_ps110a
+    ' ------------------------
+    class sena_ps110{
+        - serial
+        - socket
+    }
+    sena_ps110 -up-> socket
+    
+    ' parameter
+    ' =========
+    package parameter <<Rect>> {
+    
+    ' parameter.network
+    ' -----------------
+    class network #E0FFFF{
+        - host
+        - port
+        - _ip_
+        - _tcp_
+        - timeout
+    }
+    
+    ' parameter.gpib
+    ' --------------
+    class gpib #E0FFFF{
+        - port
+    }
+    
+    ' parameter.serial
+    ' ----------------
+    class serial #E0FFFF{
+        - boadrate
+    }
+    }
+        
+}
+
+package device <<Frame>>{
+    ' device
+    ' ======
+    abstract device{
+    }
+    
+    package signalgenerator <<Rect>> {
+    ' Signal Generator
+    ' ================
+    interface signalgenerator.signalgenerator{
+        + freq_set() 
+        + freq_check()
+        + power_set()
+        + power_check()
+        + output_on()
+        + output_off()
+        + output_check() 
+    }
+    
+    ' Agilent
+    ' -------
+    package sg.agilent #EEEEEE{
+    class sg.agilent.agilent{
+        - device
+    }
+    sg.agilent.agilent -up-|> signalgenerator.signalgenerator
+    
+    class sg.agilent.E8257D
+    sg.agilent.E8257D -up-|> sg.agilent.agilent
+
+    class sg.agilent.E8247C
+    sg.agilent.E8247C -up-|> sg.agilent.agilent
+
+    class sg.agilent.83732C
+    sg.agilent.83732C -up-|> sg.agilent.agilent
+    }
+    
+    ' HP
+    ' --
+    package sg.hp #EEEEEE{
+    class sg.hp.hp{
+        - device
+    }
+    sg.hp.hp -up-|> signalgenerator.signalgenerator
+    
+    class sg.hp.8644B
+    sg.hp.8644B -up-> sg.hp.hp
+    }
+    
+    ' phase matrix
+    ' ------------
+    package sg.phasematrix #EEEEEE{
+    class sg.phasematrix.phasematrix{
+        - device
+        + temperature_get()
+        + status_get()
+    }
+    sg.phasematrix.phasematrix -up-|> signalgenerator.signalgenerator
+    
+    class sg.phasematrix.FSW0010
+    sg.phasematrix.FSW0010 -up-|> sg.phasematrix.phasematrix
+
+    class sg.phasematrix.FSW0020
+    sg.phasematrix.FSW0020 -up-|> sg.phasematrix.phasematrix
+    }
+}
+
+
+    package attenuator_switch <<Rect>> {
+    ' Attenuator
+    ' ================
+    interface attenuator_switch.attenuator{
+        + att_level_set() 
+        + att_level_check() 
+    }
+    ' Switch
+    ' ================
+    interface attenuator_switch.switch{
+        + switch_to_l() 
+        + switch_to_r() 
+    }
+    ' attenuator_switch_driver
+    ' -------
+    class attenuator_switch.attenuator_switch_driver{
+        - device
+    }
+    ' Agilent
+    ' -------
+    class attenuator_switch.agilent{
+        - device.attenuator_switch_driver
+    }
+    attenuator_switch.attenuator_switch_driver -up-|> attenuator_switch.attenuator
+    attenuator_switch.attenuator_switch_driver -up-|> attenuator_switch.switch
+    attenuator_switch.agilent ?up|> attenuator_switch.attenuator_switch_driver
+    
+    class attenuator_switch.11713B
+    attenuator_switch.11713B -up-|> attenuator_switch.agilent
+
+    class attenuator_switch.11713C
+    attenuator_switch.11713C -up-|> attenuator_switch.agilent
+}
+    package motor <<Rect>> {
+    ' motor
+    ' ================
+    interface motor.motor{
+        + move_to_r()
+        + move_to_sky() 
+        + move_to_hot()
+        + move_to_cold()
+        + move_to_rf() 
+    }
+    ' oriental_motor
+    ' -------
+    class motor.oriental_motor{
+        - device
+    }
+    
+    motor.oriental_motor -up-|> motor.motor
+
+    class motor.EZS3D020M_A
+    motor.EZS3D020M_A -up-|> motor.oriental_motor
+}
+
+    package spectrumanalyzer <<Rect>> {
+    ' Spectrum Analyzer
+    ' ================
+    interface spectrumanalyzer.spectrumanalyzer {
+        + measure() 
+        + freq_center_check()
+        + freq_center_set()
+        + freq_start_check()
+        + freq_start_set()
+        + freq_stop_check()
+        + freq_stop_set()
+        + resolutionBW_set()
+        + resolutionBW_check()
+        + freq_span_set()
+        + freq_span_check()
+        + full_span_set()
+        + zero_span_set()
+        + sweeppoints_set()
+        + sweeppoints_check()
+        + attenuation_set()
+        + attenuation_check()
+        + sweeptime_set()
+        + sweeptime_check()
+        + referencelevel_set()
+        + referencelevel_check()
+        + scaledivision_set()
+        + videoBW_set()
+        + videoBW_check()
+        + average_set()
+        + average_check()
+    }
+    
+    ' Agilent_hp
+    ' -------
+    package sa.agilent #EEEEEE{
+    class sa.agilent.agilent_N{
+        - device
+    }
+    sa.agilent.agilent_N -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.agilent.N9343C
+    sa.agilent.N9343C -up-|> sa.agilent.agilent_N
+
+    class sa.agilent.agilent_E_hp{
+        - device
+    }
+    sa.agilent.agilent_E_hp -up-|> spectrumanalyzer.spectrumanalyzer
+
+    class sa.agilent.E4407B
+    sa.agilent.E4407B -up-|> sa.agilent.agilent_E_hp
+
+    class sa.agilent.8596E
+    sa.agilent.8596E -up-|> sa.agilent.agilent_E_hp
+
+    class sa.agilent.8593E
+    sa.agilent.8593E -up-|> sa.agilent.agilent_E_hp
+
+    }
+
+    ' ADVANTEST
+    ' ------------
+    package sa.ADVANTEST #EEEEEE{
+    class sa.ADVANTEST.ADVANTEST{
+        - device
+    }
+    sa.ADVANTEST.ADVANTEST -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.ADVANTEST.R3131A
+    sa.ADVANTEST.R3131A -up-|> sa.ADVANTEST.ADVANTEST
+    }
+
+    ' RPG
+    ' ------------
+    package sa.RPG #EEEEEE{
+    class sa.RPG.RPG{
+        - device
+    }
+    sa.RPG.RPG -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.RPG.XFFTS
+    sa.RPG.XFFTS -up-|> class sa.RPG.RPG
+    }
+
+    ' Acqiris
+    ' ------------
+    package sa.Acqiris #EEEEEE{
+    class sa.Acqiris.Acqiris{
+        - device
+    }
+    sa.Acqiris.Acqiris -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.Acqiris.ac240
+    sa.Acqiris.ac240 -up-|> class sa.Acqiris.Acqiris
+    }
+}
+
+    package powermeter <<Rect>> {
+    ' powermeter
+    ' ================
+    interface powermeter.powermeter {
+        + measure()
+        + zeroing()
+        + calibration()
+
+    }
+    ' hp
+    ' -------
+    class powermeter.hp {
+        - device
+    }
+    
+    powermeter.hp -up-|> powermeter.powermeter
+
+    ' Anritsu
+    ' -------
+    class powermeter.Anritsu {
+        - device
+    }
+    
+    powermeter.Anritsu -up-|> powermeter.powermeter
+
+    class powermeter.EPM_441A
+    powermeter.EPM_441A -up-|> powermeter.hp
+
+    class powermeter.ML2438A
+    powermeter.ML2438A -up-|> powermeter.Anritsu
+}
+
+    package temp_monitor <<Rect>> {
+    ' temp_monitor
+    ' ================
+    interface temp_monitor.temp_monitor{
+        + temp_get()
+    }
+    ' Lakeshore
+    ' -------
+    class temp_monitor.Lakeshore{
+        - device
+    }
+    
+    temp_monitor.Lakeshore -up-|> temp_monitor.temp_monitor
+
+    class temp_monitor.Lakeshore_218
+    temp_monitor.Lakeshore_218 -up-|> temp_monitor.Lakeshore
+}
+    package vacuum_monitor <<Rect>> {
+    ' vacuum_monitor
+    ' ================
+    interface vacuum_monitor.vacuum_monitor{
+        + pressure_get()
+    }
+    ' pfeiffer
+    ' -------
+    class vacuum_monitor.pfeiffer{
+        - device
+    }
+    
+    vacuum_monitor.pfeiffer -up-|> vacuum_monitor.vacuum_monitor
+
+    class vacuum_monitor.D_35614_asslar
+    vacuum_monitor.D_35614_asslar -up-|> vacuum_monitor.pfeiffer
+}
+
+@enduml
+
+
