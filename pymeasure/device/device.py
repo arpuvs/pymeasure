@@ -5,5 +5,7 @@ class device(object):
         self.com = com
         pass
     
+    def self_test(self):
+        pass
 
 
