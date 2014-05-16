@@ -67,7 +67,7 @@ class signalgenerator(device.device):
         
     def _freq_set(self, freq, unit):
         self.com.open()
-        self.com.send('%s %s %s\n'%(self.api['freq_set'], freq, unit))
+        self.com.send('%s %f %s\n'%(self.api['freq_set'], freq, unit))
         self.com.close()
         return
     
@@ -117,7 +117,7 @@ class signalgenerator(device.device):
 class dummy(signalgenerator):
     def _freq_set(self, freq, unit):
         self.com.open()
-        self.com.send('%s %s %s\n'%(self.api['freq_set'], freq, unit))
+        self.com.send('%s %f %s\n'%(self.api['freq_set'], freq, unit))
         self.com.close()
         return
     
