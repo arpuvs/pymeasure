@@ -3,9 +3,9 @@
 import signalgenerator as sg
 
 class agilent(sg.signalgenerator):
-    api = {'freq_set': 'FREQ %f %s\n' %(freq, unit),
+    api = {'freq_set': 'FREQ¥n',
            'freq_check': 'FREQ?\n',
-           'power_set': 'POW %f dBm\n' %(power),
+           'power_set': 'POW %f dB\n' %(power),
            'power_check': 'POW?\n',
            'output_on': 'OUTP 1\n',
            'output_off': 'OUTP 0\n',
