@@ -32,7 +32,7 @@ class signalgenerator(device.device):
         self.freq = self._freq_check()
         return self.freq
         
-    def power_set(self, power):
+    def power_set(self, power, unit='DBm'):
         """
         """
         self._power_set(power)
@@ -67,7 +67,7 @@ class signalgenerator(device.device):
         
     def _freq_set(self, freq, unit):
         self.com.open()
-        self.com.send('%s %s %s\n'%(self.api['freq_set'], freq, unit))
+        self.com.send('%s %f %s\n'%(self.api['freq_set'], freq, unit))
         self.com.close()
         return
     
@@ -79,9 +79,9 @@ class signalgenerator(device.device):
         if abs(freq - self.freq)>1e-3: assert Error
         return freq
         
-    def _power_set(self, power):
+    def _power_set(self, power, unit):
         self.com.open()
-        self.com.send('%s %s\n'%(self.api['power_set'], power))
+        self.com.send('%s %f %s\n'%(self.api['power_set'], power, unit))
         self.com.close()
         return
     
@@ -117,7 +117,7 @@ class signalgenerator(device.device):
 class dummy(signalgenerator):
     def _freq_set(self, freq, unit):
         self.com.open()
-        self.com.send('%s %s %s\n'%(self.api['freq_set'], freq, unit))
+        self.com.send('%s %f %s\n'%(self.api['freq_set'], freq, unit))
         self.com.close()
         return
     
@@ -127,9 +127,9 @@ class dummy(signalgenerator):
         self.com.close()
         return self.freq
         
-    def _power_set(self, power):
+    def _power_set(self, power, unit):
         self.com.open()
-        self.com.send('%s %s\n'%(self.api['power_set'], power))
+        self.com.send('%s %f %s\n'%(self.api['power_set'], power, unit))
         self.com.close()
         return
     
