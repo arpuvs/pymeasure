@@ -3,13 +3,13 @@
 import signalgenerator as sg
 
 class agilent(sg.signalgenerator):
-    api = {'freq_set': 'FREQ¥n',
-           'freq_check': 'FREQ?\n',
-           'power_set': 'POW\n',
-           'power_check': 'POW?\n',
-           'output_on': 'OUTP 1\n',
-           'output_off': 'OUTP 0\n',
-           'output_check': 'OUTP?\n'}
+    api = {'freq_set': 'FREQ',
+           'freq_check': 'FREQ?',
+           'power_set': 'POW',
+           'power_check': 'POW?',
+           'output_on': 'OUTP 1',
+           'output_off': 'OUTP 0',
+           'output_check': 'OUTP?'}
 
 class E8257D(agilent):
     pass
