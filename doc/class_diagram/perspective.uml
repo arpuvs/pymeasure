@@ -1,6 +1,6 @@
-@startuml{perspective.pdf}
+@startuml
 
-title <size:20>pymeasure, ÉNÉâÉXê} (ëSëÃê})</size>
+title <size:20>pymeasure, „ÇØ„É©„ÇπÂõ≥ (ÂÖ®‰ΩìÂõ≥)</size>
 
 
 package communicator <<Frame>>{
@@ -77,7 +77,13 @@ package device <<Frame>>{
     ' Signal Generator
     ' ================
     interface signalgenerator.signalgenerator{
-        
+        + freq_set() 
+        + freq_check()
+        + power_set()
+        + power_check()
+        + output_on()
+        + output_off()
+        + output_check() 
     }
     
     ' Agilent
@@ -96,6 +102,13 @@ package device <<Frame>>{
 
     class sg.agilent.83732C
     sg.agilent.83732C -up-|> sg.agilent.agilent
+    
+    class sg.agilent.E8241A
+    sg.agilent.E8241A -up-|> sg.agilent.agilent
+    
+    class sg.agilent.N5183A
+    sg.agilent.N5183A -up-|> sg.agilent.agilent
+    
     }
     
     ' HP
@@ -115,6 +128,8 @@ package device <<Frame>>{
     package sg.phasematrix #EEEEEE{
     class sg.phasematrix.phasematrix{
         - device
+        + temperature_get()
+        + status_get()
     }
     sg.phasematrix.phasematrix -up-|> signalgenerator.signalgenerator
     
@@ -124,6 +139,300 @@ package device <<Frame>>{
     class sg.phasematrix.FSW0020
     sg.phasematrix.FSW0020 -up-|> sg.phasematrix.phasematrix
     }
+    
+    ' Anritsu
+    ' --
+    package sg.anritsu #EEEEEE{
+    class sg.anritsu.anritsu{
+        - device
+    }
+    sg.anritsu.anritsu -up-|> signalgenerator.signalgenerator
+    
+    class sg.anritsu.68047B
+    sg.anritsu.68047B -up-> sg.anritsu.anritsu
+    }
+    
+}
+
+	package BiasBox <<Rect>> {
+    ' BiasBox
+    ' ================
+    interface BiasBox.BiasBox{
+        + bias_voltage_set()
+        + bias_voltage_check()
+        + bias_current_set() 
+    
+    }
+    ' DAQ
+    ' ================
+    interface BiasBox.DAQ{
+        + digital_output_set()
+        + digital_input_set()
+        + digital_output_check()
+        + digital_input_check() 
+        + analog_output_set()
+        + analog_input_set()
+        + analog_output_check()
+        + analog_input_check()
+         
+    }
+    ' national_instrument
+    ' -------
+    class BiasBox.national_instrument{
+        - device
+    }
+    
+    ' NI_USB_6221
+    ' -------
+    class BiasBox.NI_USB_6221{
+        - device.DAQ
+    }
+    BiasBox.NI_USB_6221 -up-|> BiasBox.national_instrument
+    
+    
+    BiasBox.national_instrument -up-|> BiasBox.DAQ
+    BiasBox.DAQ -up-|> BiasBox.BiasBox
+}
+	
+	
+    package attenuator_switch <<Rect>> {
+    ' Attenuator
+    ' ================
+    interface attenuator_switch.attenuator{
+        + att_level_set() 
+        + att_level_check() 
+    }
+    ' Switch
+    ' ================
+    interface attenuator_switch.switch{
+        + switch_to_l() 
+        + switch_to_r() 
+    }
+    ' attenuator_switch_driver
+    ' -------
+    class attenuator_switch.attenuator_switch_driver{
+        - device
+    }
+    
+    ' Agilent_A
+    ' -------
+    class attenuator_switch.agilent_a{
+        - device.attenuator_switch_driver
+    }
+    attenuator_switch.agilent_a -up-|> attenuator_switch.attenuator_switch_driver
+    
+    class attenuator_switch.11713A
+    attenuator_switch.11713A -up-|> attenuator_switch.agilent_a
+    
+    ' Agilent_BC
+    ' -------
+    class attenuator_switch.agilent_bc{
+        - device.attenuator_switch_driver
+    }
+    attenuator_switch.attenuator_switch_driver -up-|> attenuator_switch.attenuator
+    attenuator_switch.attenuator_switch_driver -up-|> attenuator_switch.switch
+    attenuator_switch.agilent_bc -up-|> attenuator_switch.attenuator_switch_driver
+    
+    class attenuator_switch.11713B
+    attenuator_switch.11713B -up-|> attenuator_switch.agilent_bc
+
+    class attenuator_switch.11713C
+    attenuator_switch.11713C -up-|> attenuator_switch.agilent_bc
+}
+    package motor <<Rect>> {
+    ' motor
+    ' ================
+    interface motor.motor{
+        + move_to_r()
+        + move_to_sky() 
+        + move_to_hot()
+        + move_to_cold()
+        + move_to_rf() 
+    }
+    ' oriental_motor
+    ' -------
+    class motor.oriental_motor{
+        - device
+    }
+    
+    motor.oriental_motor -up-|> motor.motor
+
+    class motor.EZS3D020M_A
+    motor.EZS3D020M_A -up-|> motor.oriental_motor
+}
+
+    package spectrumanalyzer <<Rect>> {
+    ' Spectrum Analyzer
+    ' ================
+    interface spectrumanalyzer.spectrumanalyzer {
+        + measure() 
+        + freq_center_check()
+        + freq_center_set()
+        + freq_start_check()
+        + freq_start_set()
+        + freq_stop_check()
+        + freq_stop_set()
+        + resolutionBW_set()
+        + resolutionBW_check()
+        + freq_span_set()
+        + freq_span_check()
+        + full_span_set()
+        + zero_span_set()
+        + sweeppoints_set()
+        + sweeppoints_check()
+        + attenuation_set()
+        + attenuation_check()
+        + sweeptime_set()
+        + sweeptime_check()
+        + referencelevel_set()
+        + referencelevel_check()
+        + scaledivision_set()
+        + videoBW_set()
+        + videoBW_check()
+        + average_set()
+        + average_check()
+    }
+    
+    ' Agilent_hp
+    ' -------
+    package sa.agilent #EEEEEE{
+    class sa.agilent.agilent_N{
+        - device
+    }
+    sa.agilent.agilent_N -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.agilent.N9343C
+    sa.agilent.N9343C -up-|> sa.agilent.agilent_N
+    
+    class sa.agilent.agilent_E{
+        - device
+    }
+    sa.agilent.agilent_E -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.agilent.E4440A
+    sa.agilent.E4440A -up-|> sa.agilent.agilent_E
+
+    class sa.agilent.agilent_E2_hp{
+        - device
+    }
+    sa.agilent.agilent_E2_hp -up-|> spectrumanalyzer.spectrumanalyzer
+
+    class sa.agilent.E4407B
+    sa.agilent.E4407B -up-|> sa.agilent.agilent_E2_hp
+
+    class sa.agilent.8596E
+    sa.agilent.8596E -up-|> sa.agilent.agilent_E2_hp
+
+    class sa.agilent.8593E
+    sa.agilent.8593E -up-|> sa.agilent.agilent_E2_hp
+
+    }
+
+    ' ADVANTEST
+    ' ------------
+    package sa.ADVANTEST #EEEEEE{
+    class sa.ADVANTEST.ADVANTEST{
+        - device
+    }
+    sa.ADVANTEST.ADVANTEST -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.ADVANTEST.R3131A
+    sa.ADVANTEST.R3131A -up-|> sa.ADVANTEST.ADVANTEST
+    }
+
+    ' RPG
+    ' ------------
+    package sa.RPG #EEEEEE{
+    class sa.RPG.RPG{
+        - device
+    }
+    sa.RPG.RPG -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.RPG.XFFTS
+    sa.RPG.XFFTS -up-|> class sa.RPG.RPG
+    }
+
+    ' Acqiris
+    ' ------------
+    package sa.Acqiris #EEEEEE{
+    class sa.Acqiris.Acqiris{
+        - device
+    }
+    sa.Acqiris.Acqiris -up-|> spectrumanalyzer.spectrumanalyzer
+    
+    class sa.Acqiris.ac240
+    sa.Acqiris.ac240 -up-|> class sa.Acqiris.Acqiris
+    }
+}
+
+    package powermeter <<Rect>> {
+    ' powermeter
+    ' ================
+    interface powermeter.powermeter {
+        + measure()
+        + zeroing()
+        + calibration()
+
+    }
+    ' hp
+    ' -------
+    class powermeter.hp {
+        - device
+    }
+    
+    powermeter.hp -up-|> powermeter.powermeter
+
+    ' Anritsu
+    ' -------
+    class powermeter.Anritsu {
+        - device
+    }
+    
+    powermeter.Anritsu -up-|> powermeter.powermeter
+
+    class powermeter.EPM_441A
+    powermeter.EPM_441A -up-|> powermeter.hp
+
+    class powermeter.ML2438A
+    powermeter.ML2438A -up-|> powermeter.Anritsu
+    
+    class powermeter.ML2437A
+    powermeter.ML2437A -up-|> powermeter.Anritsu
+}
+
+    package temp_monitor <<Rect>> {
+    ' temp_monitor
+    ' ================
+    interface temp_monitor.temp_monitor{
+        + temp_get()
+    }
+    ' Lakeshore
+    ' -------
+    class temp_monitor.Lakeshore{
+        - device
+    }
+    
+    temp_monitor.Lakeshore -up-|> temp_monitor.temp_monitor
+
+    class temp_monitor.Lakeshore_218
+    temp_monitor.Lakeshore_218 -up-|> temp_monitor.Lakeshore
+}
+    package vacuum_monitor <<Rect>> {
+    ' vacuum_monitor
+    ' ================
+    interface vacuum_monitor.vacuum_monitor{
+        + pressure_get()
+    }
+    ' pfeiffer
+    ' -------
+    class vacuum_monitor.pfeiffer{
+        - device
+    }
+    
+    vacuum_monitor.pfeiffer -up-|> vacuum_monitor.vacuum_monitor
+
+    class vacuum_monitor.D_35614_asslar
+    vacuum_monitor.D_35614_asslar -up-|> vacuum_monitor.pfeiffer
 }
 
 @enduml
