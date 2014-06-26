@@ -2,6 +2,7 @@
 
 
 class communicator(object):
+    method = 'communicator'
     connection = False
     
     def __init__(self, *args):
