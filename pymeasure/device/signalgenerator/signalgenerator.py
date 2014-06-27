@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 import threading
 import socket
 
@@ -82,9 +83,14 @@ class signalgenerator(device.device):
         self.model = self._model_check()
         return
         
+    def preset(self):
+        return None
+    
     # self test
     # =========
-    def self_test(self):
+    def self_test(self, interval=0.2):
+        wait = lambda: time.sleep(interval)
+        
         print('self_tset :: signalgenerator')
         print('============================')
         print('model: %s'%(self.model))
@@ -95,8 +101,11 @@ class signalgenerator(device.device):
         print('----------')
         print('output_off()')
         self.output_off()
+        wait()
+        
         print("power_set(-80, 'dBm')")
         self.power_set(-80, 'dBm')
+        wait()
         
         print('')
         print('test start')
@@ -115,6 +124,7 @@ class signalgenerator(device.device):
         print('%-30s'%"freq_set(100, 'MHz'):"),
         try:
             self.freq_set(100, 'MHz')
+            wait()
             ret = self.freq_check()
             if ret!=100*1e6: print('!! Bad !!, %f'%(ret))
             else: print('OK, %f'%ret)
@@ -126,6 +136,7 @@ class signalgenerator(device.device):
         print('%-30s'%"freq_set(1234, 'kHz'):"),
         try:
             self.freq_set(1234, 'kHz')
+            wait()
             ret = self.freq_check()
             if ret!=1234*1e3: print('!! Bad !!, %f'%(ret))
             else: print('OK, %f'%ret)
@@ -137,6 +148,7 @@ class signalgenerator(device.device):
         print('%-30s'%"freq_set(9.8765432101, 'GHz'):"),
         try:
             self.freq_set(9.8765432101, 'GHz')
+            wait()
             ret = self.freq_check()
             if ret!=9.8765432101*1e9: print('!! Bad !!, %f'%(ret))
             else: print('OK, %f'%ret)
@@ -148,6 +160,7 @@ class signalgenerator(device.device):
         print('%-30s'%'power_check():'),
         try:
             ret = self.power_check()
+            wait()
             if type(ret)!=float: print('!! Bad !!, return is not float')
             else: print('OK, %f'%ret)
         except:
@@ -158,6 +171,7 @@ class signalgenerator(device.device):
         print('%-30s'%"power_set(-20, 'dBm'):"),
         try:
             self.power_set(-20, 'dBm')
+            wait()
             ret = self.power_check()
             if ret!=-20: print('!! Bad !!, %f'%(ret))
             else: print('OK, %f'%ret)
@@ -169,6 +183,7 @@ class signalgenerator(device.device):
         print('%-30s'%"power_set(-43.21, 'dBm'):"),
         try:
             self.power_set(-43.21, 'dBm')
+            wait()
             ret = self.power_check()
             if ret!=-43.21: print('!! Bad !!, %f'%(ret))
             else: print('OK, %f'%ret)
@@ -180,6 +195,7 @@ class signalgenerator(device.device):
         print('%-30s'%'output_check():'),
         try:
             ret = self.output_check()
+            wait()
             if type(ret)!=int: print('!! Bad !!, return is not int')
             else: print('OK, %d'%ret)
         except:
@@ -190,6 +206,7 @@ class signalgenerator(device.device):
         print('%-30s'%"output_on():"),
         try:
             self.output_on()
+            wait()
             ret = self.output_check()
             if ret!=1: print('!! Bad !!, %d'%(ret))
             else: print('OK, %d'%ret)
@@ -201,6 +218,7 @@ class signalgenerator(device.device):
         print('%-30s'%"output_off():"),
         try:
             self.output_off()
+            wait()
             ret = self.output_check()
             if ret!=0: print('!! Bad !!, %d'%(ret))
             else: print('OK, %d'%ret)
@@ -217,6 +235,9 @@ class signalgenerator(device.device):
         self.output_off()
         print("power_set(-80, 'dBm')")
         self.power_set(-80, 'dBm')
+        wait()
+        print("preset()")
+        self.preset()
         
         print('')
         return
