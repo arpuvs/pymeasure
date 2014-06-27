@@ -286,6 +286,7 @@ dummy_api = {'freq_set': 'dummy_sg:freq_set',
 class dummy_client(signalgenerator):
     def __init__(self, com):
         self.server = dummy_server(com.port)
+        time.sleep(0.05)
         signalgenerator.__init__(self, com)
         pass
         
