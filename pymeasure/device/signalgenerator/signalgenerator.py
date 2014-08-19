@@ -133,12 +133,12 @@ class signalgenerator(device.device):
             print('!! Error !!, %s, %s'%(err[0].__name__, err[1]))
             pass
 
-        print('%-30s'%"freq_set(1234, 'kHz'):"),
+        print('%-30s'%"freq_set(12.34, 'MHz'):"),
         try:
-            self.freq_set(1234, 'kHz')
+            self.freq_set(12.34, 'MHz')
             wait()
             ret = self.freq_check()
-            if ret!=1234*1e3: print('!! Bad !!, %f'%(ret))
+            if ret!=12.34*1e6: print('!! Bad !!, %f'%(ret))
             else: print('OK, %f'%ret)
         except:
             err = sys.exc_info()
