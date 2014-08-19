@@ -11,21 +11,21 @@ def port_generate(index):
 
 # signalgenerator
 # ===============
-com_sg = pymeasure.socket_dummy_communicator('127.0.0.1', port_generate(0))
+com_sg = pymeasure.socket_communicator('127.0.0.1', port_generate(0))
 sg = pymeasure.signalgenerator.dummy(com_sg)
 sg.self_test(0.05)
 sg.server_stop()
 
 # powermeter
 # ==========
-com_pm = pymeasure.socket_dummy_communicator('127.0.0.1', port_generate(1))
+com_pm = pymeasure.socket_communicator('127.0.0.1', port_generate(1))
 pm = pymeasure.powermeter.dummy(com_pm)
 pm.self_test(0.05)
 pm.server_stop()
 
 # spectrumanalyzer
 # ==========
-com_sa = pymeasure.socket_dummy_communicator('127.0.0.1', port_generate(2))
+com_sa = pymeasure.socket_communicator('127.0.0.1', port_generate(2))
 sa = pymeasure.spectrumanalyzer.dummy(com_sa)
 sa.self_test(0.05)
 sa.server_stop()
