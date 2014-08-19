@@ -14,14 +14,12 @@ class socket_communicator(com.communicator):
     
     def __init__(self, host, port, timeout=10,
                  family=socket.AF_INET,
-                 type=socket.SOCK_STREAM,
-                 open=True):
+                 type=socket.SOCK_STREAM,):
         self.host = host
         self.port = port
         self.timeout = timeout
         self.family = family
         self.type = type
-        if open: self.open()
         pass
     
     def open(self):
@@ -51,13 +49,3 @@ class socket_communicator(com.communicator):
         return ret
 
 
-class socket_dummy_communicator(socket_communicator):
-    method = 'socket_dummy'
-    
-    def __init__(self, host, port, timeout=10,
-                 family=socket.AF_INET,
-                 type=socket.SOCK_STREAM):
-        socket_communicator.__init__(self, host, port, timeout,
-                                     family, type, open=False)
-        pass
-        
