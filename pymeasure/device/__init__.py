@@ -4,6 +4,7 @@
 import signalgenerator
 import powermeter
 import spectrumanalyzer
+import vacuummonitor
 
 
 

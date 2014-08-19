@@ -30,4 +30,12 @@ sa = pymeasure.spectrumanalyzer.dummy(com_sa)
 sa.self_test(0.05)
 sa.server_stop()
 
+# vacuummonitor
+# ==========
+com_vm = pymeasure.socket_communicator('127.0.0.1', port_generate(3))
+vm = pymeasure.vacuummonitor.dummy(com_vm)
+vm.self_test(0.05)
+vm.server_stop()
+
+
 

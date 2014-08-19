@@ -91,7 +91,7 @@ class signalgenerator(device.device):
     def self_test(self, interval=0.2):
         wait = lambda: time.sleep(interval)
         
-        print('self_tset :: signalgenerator')
+        print('self_test :: signalgenerator')
         print('============================')
         print('model: %s'%(self.model))
         print('communicator: %s'%(self.com.method))
