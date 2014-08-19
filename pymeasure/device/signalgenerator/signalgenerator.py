@@ -180,12 +180,12 @@ class signalgenerator(device.device):
             print('!! Error !!, %s, %s'%(err[0].__name__, err[1]))
             pass
 
-        print('%-30s'%"power_set(-43.21, 'dBm'):"),
+        print('%-30s'%"power_set(-12.34, 'dBm'):"),
         try:
-            self.power_set(-43.21, 'dBm')
+            self.power_set(-12.34, 'dBm')
             wait()
             ret = self.power_check()
-            if ret!=-43.21: print('!! Bad !!, %f'%(ret))
+            if ret!=-12.34: print('!! Bad !!, %f'%(ret))
             else: print('OK, %f'%ret)
         except:
             err = sys.exc_info()
