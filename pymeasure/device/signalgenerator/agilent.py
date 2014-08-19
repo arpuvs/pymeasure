@@ -65,7 +65,7 @@ class agilent(sg.signalgenerator):
 
 
 class E8257D(agilent):
-    pass
+    machine_test = 'pass'
 
 class E8247C(agilent):
     machine_test = 'pass'
@@ -75,8 +75,9 @@ class sg83732(agilent):
     pass
 
 class E8241A(agilent):
-    pass
+    machine_test = 'pass'
 
 class N5183A(agilent):
-    pass
+    machine_test = 'pass'
+
 
