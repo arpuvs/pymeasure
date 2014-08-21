@@ -14,26 +14,46 @@ from .. import device
 # ======================
 
 class vacuummonitor(device.device):
-    #property configuration
-    # =====================
-    pressure = None
-
+    # property configuration
+    # ======================
+    press1 = 0
+    press2 = 0
+    unit1 = 'None'
+    unit2 = 'None'
+    gauge = 0
+    press = []
+    unit = 'None'
 
     # constructor
     # ============
     def __init__(self, com=None):
         device.device.__init__(self, com)
-        self.press_get()
+        self.measure()
+        self.unit_check()
         self.model_check()
         pass
 
-    #Interface method
-    # ===============
-    def press_get(self):
+    # Interface method
+    # ================
+    def measure(self):
         """
         """
-        self.press = self._press_get()
+        self.press = self._measure()
         return self.press
+
+    def unit_set(self, gauge, unit):
+        """
+        """
+        self._unit_set(gauge, unit)
+        self.unit = self._unit_check()
+        return
+
+    def unit_check(self):
+        """
+        """
+        self.unit = self._unit_check()
+        return self.unit
+
 
     def model_check(self):
         self.model = self._model_check()
@@ -55,18 +75,45 @@ class vacuummonitor(device.device):
         print('')
         print('test start')
         print('----------')
-        print('press_get()')
+        print('%-10s'%'measure():'),
         try:
-            ret = self.press_get()
-            if type(ret)!=float: print('!! Bad !!, return in not float')
-            else: print('OK, %f'%ret)
+            ret = self.measure()
+            wait()
+            if type(ret)!=str: print('!! Bad !!, return is not str')
+            else: print('OK, %s'%ret)
         except:
             err = sys.exc_info()
             print('!! Error !!, %s, %s'%(err[0].__name__, err[1]))
             pass
 
+        print('%-30s'%'unit_check():'),
+        try:
+            ret = self.unit_check()
+            wait()
+            if type(ret)!=str: print('!! Bad !!, return is not str')
+            else: print('OK, %s'%ret)
+        except:
+            err = sys.exc_info()
+            print('!! Error !!, %s %s'%(err[0].__name__, err[1]))
+            pass
+
+        print('%-30s'%'unit_set():'),
+        try:
+            self.unit_set(1, 'torr')
+            wait()
+            ret = self.unit_check()
+            if ret!="['torr', 'None']": print('!! Bad !!, %s'%(ret))
+            else: print('OK, %s'%ret)
+        except:
+            err = sys.exc_info()
+            print('!! Error !!, %s %s'%(err[0].__name__, err[1]))
+            pass
+
+
+
         wait()
 
+        print('')
         print('test end')
         print('')
         return
@@ -75,8 +122,14 @@ class vacuummonitor(device.device):
     # internal method
     # ===============
 
-    def _press_get(self):
-        return float()
+    def _measure(self):
+        return str()
+
+    def _unit_set(self, gauge, unit):
+        return None
+
+    def _unit_check(self):
+        return str()
 
     def _model_check(self):
         return str()
@@ -86,11 +139,23 @@ class vacuummonitor(device.device):
 # ====================
 # Dummy Server/Client
 # ====================
-dummy_api = {'press_get': 'dummy_vm:press_get'}
+dummy_api = {'measure': 'dummy_vm:measure',
+             'unit_set': 'dummy_vm:unit_set',
+             'unit_check': 'dummy_vm:unit_check'}
 
 # dummy client
 # ============
 class dummy_client(vacuummonitor):
+
+    # property configuration
+    # ======================
+
+    unit = 'None'
+    press = []
+
+    # method
+    # ======
+
     def __init__(self, com):
         self.server = dummy_server(com.port)
         time.sleep(0.05)
@@ -103,12 +168,25 @@ class dummy_client(vacuummonitor):
         self.com.close()
         return
 
-    def _press_get(self):
+    def _measure(self):
         self.com.open()
-        self.com.send('%s\n'%(dummy_api['press_get']))
-        press = float(self.com.readline())
+        self.com.send('%s\n'%(dummy_api['measure']))
+        press = str(self.com.readline().strip().split(' '))
         self.com.close()
         return press
+
+    def _unit_set(self, gauge, unit):
+        self.com.open()
+        self.com.send('%s %s %s\n'%(dummy_api['unit_set'], gauge, unit))
+        self.com.close()
+        return
+
+    def _unit_check(self):
+        self.com.open()
+        self.com.send('%s\n'%(dummy_api['unit_check']))
+        unit = str(self.com.readline().strip().split(' '))
+        self.com.close()
+        return unit
 
     def _model_check(self):
         return 'VacuumMonitor_Dummy'
@@ -118,7 +196,12 @@ class dummy_client(vacuummonitor):
 # dummy server
 # ============
 class dummy_server(object):
-    press = 0
+    press1 = 0
+    press2 = 0
+    unit1 = 'None'
+    unit2 = 'None'
+    gauge = 0
+    unit = 'None'
 
     def __init__(self, port):
         self.port = port
@@ -155,11 +238,28 @@ class dummy_server(object):
         return
 
     def handle(self, command, params):
-        if command==dummy_api['press_get']: self.press_get(params)
+        if command==dummy_api['measure']: self.measure(params)
+        elif command==dummy_api['unit_check']: self.unit_check(params)
+        elif command==dummy_api['unit_set']: self.unit_set(params)
         else: print(command, params)
         return
 
-    def press_get(self, params):
-        self.client.send('%.10f\n'%(self.press))
+    def measure(self, params):
+        self.client.send('%.10f %.10f\n'%(self.press1, self.press2))
         return
+
+    def unit_check(self, params):
+        self.client.send('%s %s\n'%(self.unit1, self.unit2))
+        return
+
+    def unit_set(self, params):
+        gauge = int(params[0])
+        self.unit1 = str(params[1].lower())
+        return
+
+
+
+
+
+
 
