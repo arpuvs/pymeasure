@@ -21,8 +21,7 @@ class vacuummonitor(device.device):
     unit1 = 'None'
     unit2 = 'None'
     gauge = 0
-    press = []
-    unit = 'None'
+
 
     # constructor
     # ============
@@ -150,8 +149,6 @@ class dummy_client(vacuummonitor):
     # property configuration
     # ======================
 
-    unit = 'None'
-    press = []
 
     # method
     # ======
@@ -171,7 +168,10 @@ class dummy_client(vacuummonitor):
     def _measure(self):
         self.com.open()
         self.com.send('%s\n'%(dummy_api['measure']))
-        press = str(self.com.readline().strip().split(' '))
+        ret = self.com.readline().strip().split(',')
+        del ret[1]
+        del ret[2]
+        press =str(ret)
         self.com.close()
         return press
 
@@ -184,7 +184,10 @@ class dummy_client(vacuummonitor):
     def _unit_check(self):
         self.com.open()
         self.com.send('%s\n'%(dummy_api['unit_check']))
-        unit = str(self.com.readline().strip().split(' '))
+        ret = self.com.readline().strip().split(',')
+        del ret[0]
+        del ret[1]
+        unit = str(ret)
         self.com.close()
         return unit
 
@@ -201,7 +204,7 @@ class dummy_server(object):
     unit1 = 'None'
     unit2 = 'None'
     gauge = 0
-    unit = 'None'
+    unit = []
 
     def __init__(self, port):
         self.port = port
@@ -245,11 +248,11 @@ class dummy_server(object):
         return
 
     def measure(self, params):
-        self.client.send('%.10f %.10f\n'%(self.press1, self.press2))
+        self.client.send('%.10f,%s,%.10f,%s\n'%(self.press1, self.unit1, self.press2, self.unit2))
         return
 
     def unit_check(self, params):
-        self.client.send('%s %s\n'%(self.unit1, self.unit2))
+        self.client.send('%.10f,%s,%.10f,%s\n'%(self.press1, self.unit1, self.press2, self.unit2))
         return
 
     def unit_set(self, params):
