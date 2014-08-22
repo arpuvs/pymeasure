@@ -72,7 +72,7 @@ class vacuummonitor(device.device):
         print('')
         print('test start')
         print('----------')
-        print('%-10s'%'measure():'),
+        print('%-30s'%'measure():'),
         try:
             ret = self.measure()
             wait()
@@ -94,7 +94,7 @@ class vacuummonitor(device.device):
             print('!! Error !!, %s %s'%(err[0].__name__, err[1]))
             pass
 
-        print('%-30s'%'unit_set():'),
+        print('%-30s'%"unit_set('torr'):"),
         try:
             self.unit_set('torr')
             wait()
