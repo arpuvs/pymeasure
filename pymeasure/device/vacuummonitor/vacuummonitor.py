@@ -41,20 +41,18 @@ class vacuummonitor(device.device):
     def unit_set(self, unit):
         """
         """
-        self._unit_set(unit)
-        self.unit = self._unit_check()
+        self.unit = self._unit_set(unit)
         return
 
     def unit_check(self):
         """
         """
-        self.unit = self._unit_check()
         return self.unit
 
 
     def model_check(self):
         self.model = self._model_check()
-        return
+        return self.model
 
 
 
@@ -76,8 +74,8 @@ class vacuummonitor(device.device):
         try:
             ret = self.measure()
             wait()
-            if type(ret)!=str: print('!! Bad !!, return is not str')
-            else: print('OK, %s'%ret)
+            if type(ret)!=list: print('!! Bad !!, return is not list')
+            elif not False in [type(a)==float for a in ret] == True: print('OK, %s'%(ret))
         except:
             err = sys.exc_info()
             print('!! Error !!, %s, %s'%(err[0].__name__, err[1]))
@@ -99,7 +97,7 @@ class vacuummonitor(device.device):
             self.unit_set('torr')
             wait()
             ret = self.unit_check()
-            if ret!="['torr', 'torr']": print('!! Bad !!, %s'%(ret))
+            if ret!='torr': print('!! Bad !!, %s'%(ret))
             else: print('OK, %s'%ret)
         except:
             err = sys.exc_info()
@@ -120,10 +118,10 @@ class vacuummonitor(device.device):
     # ===============
 
     def _measure(self):
-        return str()
+        return list()
 
     def _unit_set(self, unit):
-        return None
+        return str()
 
     def _unit_check(self):
         return str()
@@ -161,27 +159,22 @@ class dummy_client(vacuummonitor):
         self.com.open()
         self.com.send('%s\n'%(dummy_api['measure']))
         ret = self.com.readline().strip().split(',')
-        del ret[1]
-        del ret[2]
-        press =str(ret)
+        press = [ret[1], ret[3]]
         self.com.close()
         return press
 
     def _unit_set(self, unit):
         self.com.open()
         self.com.send('%s %s\n'%(dummy_api['unit_set'], unit))
+        self.unit =str(self.com.readline().strip())
         self.com.close()
-        return
+        return self.unit
 
     def _unit_check(self):
         self.com.open()
         self.com.send('%s\n'%(dummy_api['unit_check']))
-        ret = self.com.readline().strip().split(',')
-        del ret[0]
-        del ret[1]
-        unit = str(ret)
         self.com.close()
-        return unit
+        return self.unit
 
     def _model_check(self):
         return 'VacuumMonitor_Dummy'
@@ -193,6 +186,8 @@ class dummy_client(vacuummonitor):
 class dummy_server(object):
     press1 = 0
     press2 = 0
+    status1 = 0
+    status2 = 0
     unit = 'None'
 
     def __init__(self, port):
@@ -237,15 +232,14 @@ class dummy_server(object):
         return
 
     def measure(self, params):
-        self.client.send('%.10f,%s,%.10f,%s\n'%(self.press1, self.unit, self.press2, self.unit))
+        self.client.send('%s,%.10f,%s,%.10f\n'%(self.status1, self.press1, self.status2, self.press2))
         return
 
     def unit_check(self, params):
-        self.client.send('%.10f,%s,%.10f,%s\n'%(self.press1, self.unit, self.press2, self.unit))
         return
 
     def unit_set(self, params):
-        self.unit = str(params[0].lower())
+        self.client.send('%s\n'%(params[0].lower()))
         return
 
 
