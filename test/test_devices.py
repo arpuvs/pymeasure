@@ -9,6 +9,7 @@ def port_generate(index):
     return base_port + random.randrange(index*1000, (index+1)*1000)
     
 
+"""
 # signalgenerator
 # ===============
 com_sg = pymeasure.socket_communicator('127.0.0.1', port_generate(0))
@@ -29,5 +30,14 @@ com_sa = pymeasure.socket_communicator('127.0.0.1', port_generate(2))
 sa = pymeasure.spectrumanalyzer.dummy(com_sa)
 sa.self_test(0.05)
 sa.server_stop()
+"""
+
+
+# daq
+# ===
+com_daq = pymeasure.socket_communicator('127.0.0.1', port_generate(0))
+daq = pymeasure.daq.dummy(com_daq)
+daq.self_test(0.05)
+daq.server_stop()
 
 
