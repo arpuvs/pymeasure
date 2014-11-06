@@ -27,7 +27,7 @@ class pfeiffer(vm.vacuummonitor):
 
     def _unit_set(self, unit):
         self.com.open()
-        self.com.send('UNI,%d'%(_unit[unit]))
+        self.com.send('UNI,%d\n'%(_unit[unit]))
         self.unit = str(self.com.readline().strip())
         self.com.close()
         return self.unit
